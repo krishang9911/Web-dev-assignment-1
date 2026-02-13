@@ -36,6 +36,7 @@ const sampleEvents =
 
 function createEventCard(eventData){
    const card=document.createElement("div");
+   card.className = "event-card";
 
    card.innerHTML=`
    <button class="delete-btn">X</button>
@@ -50,8 +51,9 @@ function createEventCard(eventData){
 
 function addEvent(eventData){
     const emptyState = document.querySelector(".empty-state");  // used .(dot) because of class
-    emptyState.remove();  // .remove() is a pre-defined method in JS
-
+    if (emptyState) {
+        emptyState.remove();  // .remove() is a pre-defined method in JS
+    }
     eventContainer.appendChild(createEventCard(eventData));
 }
 
@@ -60,10 +62,51 @@ eventForm.addEventListener("submit", (event) => {
 
     const eventData = {
         title: eventTitle.value,
-        data: eventData.value,
+        date: eventDate.value,
         category: eventCategory.value,
         description: eventDescription.value
     }
 
     addEvent(eventData);
+
+    // Optional: clear form after submit
+    eventForm.reset();
+});
+
+
+// We are overlapping or replacing the div tags(event cards) created
+//  dynamically, by this <div class="empty-state">
+clearAllBtn.addEventListener("click", () => {
+    eventContainer.innerHTML = `
+    <div class="empty-state">No events yet. Add your first event!</div>`
 })
+
+
+addSampleBtn.addEventListener("click", () => {
+    sampleEvents.forEach(addEvent);
+})
+
+// Now, we will look at how an individual card(div) will be deleted
+// Up until now, we have seen how to delete all cards simultaneously
+
+eventContainer.addEventListener("click", (event) => {
+    // closest(child element ki class) used to target the closest child
+    //  element of the targeted element
+    const card = event.target.closest('.event-card');  // event card
+    console.log(card, "inside line 73");
+
+    if(event.target.classList.contains("delete-btn")){
+        card.remove();
+    }
+
+    if (!eventContainer.querySelector(".event-card")){
+        eventContainer.innerHTML = ` <div
+        class = "empty-state">No elements yet. Add your first event</div>`
+    }
+})
+
+// Simple DOM Demo — show pressed key
+
+document.addEventListener("keydown", (e) => {
+    demoContent.textContent = "Key pressed: " + e.key;
+});
